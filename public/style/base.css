@@ -4,3 +4,15 @@
   box-sizing: border-box;
   width: 100%;
 }
+
+#artist{
+  text-align: center;
+}
+
+#artist-input{
+  font-size: 30px;
+  border: 2px solid black;
+  border-radius: 12px;
+  width: 30%;
+  height: 100px;
+}
