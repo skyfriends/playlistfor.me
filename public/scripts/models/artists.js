@@ -15,14 +15,16 @@ let topTracks = [];
     });
   };
 
+
+
+
+
+
   artists.getTopTracks = function(artistSub) {
     $.ajax({
       type : 'GET',
       url : 'http://ws.audioscrobbler.com/2.0/',
-      data : 'method=artist.getinfo&' +
-      `artist=${artistSub}&` +
-      'api_key=57ee3318536b23ee81d6b27e36997cde&' +
-      'format=json',
+      data : {method: 'artist.getInfo', artists: artistSub, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'jsonp'},
       dataType : 'jsonp',
       success : function(data) {
         let $artistList = $('<ul>').addClass('artistList').appendTo('#artist');
@@ -34,10 +36,7 @@ let topTracks = [];
           $.ajax({
             type : 'GET',
             url : 'http://ws.audioscrobbler.com/2.0/',
-            data : 'method=artist.gettopTracks&' +
-            `artist=${artistSub}&` +
-            'api_key=57ee3318536b23ee81d6b27e36997cde&' +
-            'format=json',
+            data : {method: 'artist.getTopTracks', artist: artistSub, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'jsonp'},
             dataType : 'jsonp',
             success : function(data) {
               // console.log(data.toptracks);
