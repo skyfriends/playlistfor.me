@@ -1,19 +1,37 @@
-
 'use strict';
 
 var app = app || {};
 let similarArtists = [];
 let topTracks = [];
+let allSimilarTracks =[];
+let playlistSizeSlider = 3;
+let similaritySlider = 1;
 let playlist = [];
+let appendToPlaylist;
 
 (function(module) {
 
   const artists = {};
 
   artists.handleButton = function() {
-    $('#artist-button').on('click', function(){
+    $('#generate-button').on('click', function(){
       let artistSub = $('#artist-input').val();
       app.artists.getTopTracks(artistSub);
+      console.log(artistSub);
+    });
+  };
+
+  artists.handleSimilaritySlider = function(){
+    $('#similarity-slider').on('change', function(){
+      similaritySlider = $('#similarity-slider').val();
+      console.log(similaritySlider);
+    });
+  };
+
+  artists.handlePlaylistSizeSlider = function(){
+    $('#size-slider').on('change', function(){
+      playlistSizeSlider = $('#size-slider').val();
+      console.log(playlistSizeSlider);
     });
   };
 
@@ -47,30 +65,41 @@ let playlist = [];
     })
     .then(function(data) {
 
+      let similarTracksRequests = [];
+
       for (var i=0; i< similarArtists.length; i++) {
         let random = Math.floor(Math.random()* 50);
-        let simArtist = topTracks[i].track[random].artist.name;
         let simTrack = topTracks[i].track[random];
 
 
 
-        $.ajax({
+        similarTracksRequests.push($.ajax({
           type : 'GET',
           url : 'http://ws.audioscrobbler.com/2.0/',
-          data : {method: 'track.getsimilar', mbid: simTrack.mbid,  api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
+          data : {method: 'track.getsimilar', mbid: simTrack.mbid, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
           dataType : 'json',
           success: function(data) {
             console.log(data);
-            let playlist = data.similartracks;
-            for (var j=0; j<4; j++){
-              let song = playlist.track[j].name;
-              $(`<li>${song}</li>`).appendTo('#tracks');
-            }
+            allSimilarTracks.push(data.similartracks.track);
           }
-        });
-
+        }));
       }
-
+      return Promise.all(similarTracksRequests);
+    })
+    .then(function(data){
+      playlist = allSimilarTracks.concat.apply([], allSimilarTracks);
+      for (var i=similaritySlider; i<(similaritySlider + playlistSizeSlider); i++){
+        // appendToPlaylist = playlist[i].name;
+        // let context = {title: playlist[i].name, body: "This is my first post!"};
+        // let source   = $("#trackTemplate").html();
+        // let template = Handlebars.compile(source);
+        // appendToPlaylist = template(context);
+        let content = {trackName: playlist[i].name, artistName: playlist[i].artist.name, albumName: '', duration: playlist[i].duration}
+        var template = Handlebars.compile($('#trackTemplate').text())(content);
+        console.log(playlist);
+        console.log(template);
+        $('#tracks').append(template);
+      }
     });
   };
   module.artists = artists;
