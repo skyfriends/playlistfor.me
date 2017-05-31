@@ -102,24 +102,9 @@ let albumCover;
       return Promise.all(similarTracksRequests);
     })
     .then(function(data){
-      playlist = allSimilarTracks.concat.apply([], allSimilarTracks);
-      for (var i=similaritySlider; i<(similaritySlider + playlistSizeSlider); i++){
-        
-        appendToPlaylist = playlist[i].name;
+    playlist = allSimilarTracks.concat.apply([], allSimilarTracks);
+    for (var i=0; i<playlistSizeSlider; i++){
         trackMbid.push(playlist[i].mbid);
-        $(`<li>${appendToPlaylist}</li>`).appendTo('#tracks');
-       
-        let content = {trackName: playlist[i].name, artistName: playlist[i].artist.name,albumArt: albumCover, albumName: '', duration: playlist[i].duration}
-        var template = Handlebars.compile($('#trackTemplate').text())(content);
-        console.log(playlist);
-        console.log(template);
-        $('#tracks').append(template);
-      }
-    });
-  };
-
-  artists.getAlbum = function() {
-    for (var i=0; i<trackMbid.length; i++){
       $.ajax({
         type : 'GET',
         url : 'http://ws.audioscrobbler.com/2.0/',
@@ -134,13 +119,19 @@ let albumCover;
             dataType: 'json',
             success: function(data){
               albumCover = data.images[0].image;
-              $(`<img src="${albumCover}">"`).appendTo('#art');
+              for (var i=similaritySlider; i<(similaritySlider + playlistSizeSlider); i++){
+                let content = {trackName: playlist[i].name, artistName: playlist[i].artist.name,albumArt: albumCover, albumName: '', duration: playlist[i].duration}
+                var template = Handlebars.compile($('#trackTemplate').text())(content);
+                console.log(playlist);
+                console.log(template);
+                $('#tracks').append(template);
+      }
             }
-          });
-        }
-      });
+    });
+  }
+});
     }
-  };
-
+    });
+  }
   module.artists = artists;
 })(app);
