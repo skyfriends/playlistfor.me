@@ -94,7 +94,7 @@ let appendToPlaylist;
         // let source   = $("#trackTemplate").html();
         // let template = Handlebars.compile(source);
         // appendToPlaylist = template(context);
-        let content = {trackName: playlist[i].name, artistName: playlist[i].artist.name, albumName: '', duration: playlist[i].duration}
+        let content = {trackName: playlist[i].name, artistName: playlist[i].artist.name,albumArt: albumCover, albumName: '', duration: playlist[i].duration}
         var template = Handlebars.compile($('#trackTemplate').text())(content);
         console.log(playlist);
         console.log(template);
