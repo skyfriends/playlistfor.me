@@ -9,6 +9,10 @@ let similaritySlider = 1;
 let playlist = [];
 let appendToPlaylist;
 
+let trackMbid = [];
+let albumMbid = [];
+let albumCover;
+
 (function(module) {
 
   const artists = {};
@@ -32,6 +36,18 @@ let appendToPlaylist;
     $('#size-slider').on('change', function(){
       playlistSizeSlider = $('#size-slider').val();
       console.log(playlistSizeSlider);
+    });
+  };
+
+  artists.handleSimilaritySlider = function(){
+    $('#similarity-slider').on('change', function(){
+      similaritySlider = $('#similarity-slider').val();
+    });
+  };
+
+  artists.handlePlaylistSizeSlider = function(){
+    $('#size-slider').on('change', function(){
+      playlistSizeSlider = $('#size-slider').val();
     });
   };
 
@@ -79,7 +95,6 @@ let appendToPlaylist;
           data : {method: 'track.getsimilar', mbid: simTrack.mbid, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
           dataType : 'json',
           success: function(data) {
-            console.log(data);
             allSimilarTracks.push(data.similartracks.track);
           }
         }));
@@ -89,11 +104,11 @@ let appendToPlaylist;
     .then(function(data){
       playlist = allSimilarTracks.concat.apply([], allSimilarTracks);
       for (var i=similaritySlider; i<(similaritySlider + playlistSizeSlider); i++){
-        // appendToPlaylist = playlist[i].name;
-        // let context = {title: playlist[i].name, body: "This is my first post!"};
-        // let source   = $("#trackTemplate").html();
-        // let template = Handlebars.compile(source);
-        // appendToPlaylist = template(context);
+        
+        appendToPlaylist = playlist[i].name;
+        trackMbid.push(playlist[i].mbid);
+        $(`<li>${appendToPlaylist}</li>`).appendTo('#tracks');
+       
         let content = {trackName: playlist[i].name, artistName: playlist[i].artist.name,albumArt: albumCover, albumName: '', duration: playlist[i].duration}
         var template = Handlebars.compile($('#trackTemplate').text())(content);
         console.log(playlist);
@@ -102,5 +117,30 @@ let appendToPlaylist;
       }
     });
   };
+
+  artists.getAlbum = function() {
+    for (var i=0; i<trackMbid.length; i++){
+      $.ajax({
+        type : 'GET',
+        url : 'http://ws.audioscrobbler.com/2.0/',
+        data : {method: 'track.getinfo', mbid: `${trackMbid[i]}`, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
+        dataType : 'json',
+        success: function(data) {
+          albumMbid = data.track.album.mbid;
+          $.ajax({
+            type: 'GET',
+            data: {format: 'json'},
+            url: `http://coverartarchive.org/release/${albumMbid}`,
+            dataType: 'json',
+            success: function(data){
+              albumCover = data.images[0].image;
+              $(`<img src="${albumCover}">"`).appendTo('#art');
+            }
+          });
+        }
+      });
+    }
+  };
+
   module.artists = artists;
 })(app);

@@ -10,12 +10,20 @@
 }
 
 #artist-input{
+  display: inline-block;
   font-size: 30px;
   border: 2px solid black;
   border-radius: 12px;
   width: 30%;
   height: 100px;
 }
+
 #tracks{
   display: block;
-}
+
+
+#art > img{
+  display: inline;
+  width: 300px;
+  height: 300px;
+
