@@ -102,35 +102,35 @@ let albumCover;
       return Promise.all(similarTracksRequests);
     })
     .then(function(data){
-    playlist = allSimilarTracks.concat.apply([], allSimilarTracks);
-    for (var i=0; i<playlistSizeSlider; i++){
+      playlist = allSimilarTracks.concat.apply([], allSimilarTracks);
+      for (var i=0; i<playlistSizeSlider; i++){
         trackMbid.push(playlist[i].mbid);
-      $.ajax({
-        type : 'GET',
-        url : 'http://ws.audioscrobbler.com/2.0/',
-        data : {method: 'track.getinfo', mbid: `${trackMbid[i]}`, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
-        dataType : 'json',
-        success: function(data) {
-          albumMbid = data.track.album.mbid;
-          $.ajax({
-            type: 'GET',
-            data: {format: 'json'},
-            url: `http://coverartarchive.org/release/${albumMbid}`,
-            dataType: 'json',
-            success: function(data){
-              albumCover = data.images[0].image;
-              for (var i=similaritySlider; i<(similaritySlider + playlistSizeSlider); i++){
-                let content = {trackName: playlist[i].name, artistName: playlist[i].artist.name,albumArt: albumCover, albumName: '', duration: playlist[i].duration}
-                var template = Handlebars.compile($('#trackTemplate').text())(content);
-                console.log(playlist);
-                console.log(template);
-                $('#tracks').append(template);
+        $.ajax({
+          type : 'GET',
+          url : 'http://ws.audioscrobbler.com/2.0/',
+          data : {method: 'track.getinfo', mbid: `${trackMbid[i]}`, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
+          dataType : 'json',
+          success: function(data) {
+            albumMbid = data.track.album.mbid;
+            $.ajax({
+              type: 'GET',
+              data: {format: 'json'},
+              url: `http://coverartarchive.org/release/${albumMbid}`,
+              dataType: 'json',
+              success: function(data){
+                albumCover = data.images[0].image;
+                for (var i=similaritySlider; i<(similaritySlider + playlistSizeSlider); i++){
+                  let content = {trackName: playlist[i].name, artistName: playlist[i].artist.name,albumArt: albumCover, albumName: '', duration: playlist[i].duration};
+                  var template = Handlebars.compile($('#trackTemplate').text())(content);
+                  console.log(playlist);
+                  console.log(template);
+                  $('#tracks').append(template);
+                }
+              }
+            });
+          }
+        });
       }
-            }
-    });
-  }
-});
-    }
     });
   }
   module.artists = artists;
