@@ -12,8 +12,8 @@
     <section id="artist">
       <input id="artist-input" type="text" />
       <button id="generate-button" type="submit">Generate</button>
-      <!-- <input id="similarity-slider" type="range" min="1" max="10" />
-      <input id="size-slider" type="range" min="1" max="10" /> -->
+      <input id="similarity-slider" type="range" min="1" max="10" value="1"/>
+      <input id="size-slider" type="range" min="1" max="10" value="1" />
     </section>
     <div id="tracks">
 
@@ -22,7 +22,9 @@
     <script src="vendors/jquery-3.2.1.js"></script>
     <script src="scripts/models/app.js"></script>
     <script src="scripts/models/artists.js"></script>
-    <script>app.artists.handleButton();</script>
+    <script>app.artists.handleButton();
+          app.artists.handlePlaylistSizeSlider();
+          app.artists.handleSimilaritySlider();</script>
 
   </body>
 </html>

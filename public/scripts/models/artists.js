@@ -4,8 +4,11 @@
 var app = app || {};
 let similarArtists = [];
 let topTracks = [];
+let allSimilarTracks =[];
+let playlistSizeSlider = 3;
+let similaritySlider = 1;
 let playlist = [];
-// let similaritySlider, playlistSizeSlider;
+let appendToPlaylist;
 
 (function(module) {
 
@@ -19,19 +22,19 @@ let playlist = [];
     });
   };
 
-  // artists.handleSimilaritySlider = function(){
-  //   $('#similarity-slider').on('change', function(){
-  //     similaritySlider = $('similaritySlider').val();
-  //     console.log(similaritySlider);
-  //   });
-  // };
-  //
-  // artists.handlePlaylistSizeSlider = function(){
-  //   $('#size-slider').on('change', function(){
-  //     playlistSizeSlider = $('#size-slider').val();
-  //     console.log(playlistSizeSlider);
-  //   });
-  // };
+  artists.handleSimilaritySlider = function(){
+    $('#similarity-slider').on('change', function(){
+      similaritySlider = $('#similarity-slider').val();
+      console.log(similaritySlider);
+    });
+  };
+
+  artists.handlePlaylistSizeSlider = function(){
+    $('#size-slider').on('change', function(){
+      playlistSizeSlider = $('#size-slider').val();
+      console.log(playlistSizeSlider);
+    });
+  };
 
   artists.getTopTracks = function(artistSub) {
     $.ajax({
@@ -63,30 +66,33 @@ let playlist = [];
     })
     .then(function(data) {
 
+      let similarTracksRequests = [];
+
       for (var i=0; i< similarArtists.length; i++) {
         let random = Math.floor(Math.random()* 50);
-        let simArtist = topTracks[i].track[random].artist.name;
         let simTrack = topTracks[i].track[random];
 
 
 
-        $.ajax({
+        similarTracksRequests.push($.ajax({
           type : 'GET',
           url : 'http://ws.audioscrobbler.com/2.0/',
           data : {method: 'track.getsimilar', mbid: simTrack.mbid,  api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
           dataType : 'json',
           success: function(data) {
             console.log(data);
-            let playlist = data.similartracks;
-            for (var j=0; j<4; j++){
-              let song = playlist.track[j].name;
-              $(`<li>${song}</li>`).appendTo('#tracks');
-            }
+            allSimilarTracks.push(data.similartracks.track);
           }
-        });
-
+        }));
       }
-
+      return Promise.all(similarTracksRequests);
+    })
+    .then(function(data){
+      playlist = allSimilarTracks.concat.apply([], allSimilarTracks);
+      for (var i=similaritySlider; i<(similaritySlider + playlistSizeSlider); i++){
+        appendToPlaylist = playlist[i].name;
+        $(`<li>${appendToPlaylist}</li>`).appendTo('#tracks');
+      }
     });
   };
   module.artists = artists;
