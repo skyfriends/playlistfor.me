@@ -4,6 +4,7 @@
 var app = app || {};
 let similarArtists = [];
 let topTracks = [];
+let playlist = [];
 
 (function(module) {
 
@@ -40,33 +41,37 @@ let topTracks = [];
           success: function(data) {
             topTracks.push(data.toptracks);
           }
-        }))
+        }));
       }
-      return Promise.all(similarArtistsRequests)
+      return Promise.all(similarArtistsRequests);
     })
     .then(function(data) {
 
-        for (var i=0; i< similarArtists.length; i++) {
-          let random = Math.floor(Math.random()* 50);
-          let simArtist = topTracks[i].track[random].artist.name;
-          let simTrack = topTracks[i].track[random];
-          console.log(simArtist)
-          console.log(simTrack)
-          console.log(random)
+      for (var i=0; i< similarArtists.length; i++) {
+        let random = Math.floor(Math.random()* 50);
+        let simArtist = topTracks[i].track[random].artist.name;
+        let simTrack = topTracks[i].track[random];
 
-            $.ajax({
-            type : 'GET',
-            url : 'http://ws.audioscrobbler.com/2.0/',
-            data : {method: 'track.getsimilar', track: simTrack, artist: simArtist, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
-            dataType : 'json',
-            success: function(data) {
-              //  console.log(data.artist);
-              //  console.log(data.track)
+
+
+        $.ajax({
+          type : 'GET',
+          url : 'http://ws.audioscrobbler.com/2.0/',
+          data : {method: 'track.getsimilar', mbid: simTrack.mbid,  api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
+          dataType : 'json',
+          success: function(data) {
+            console.log(data);
+            let playlist = data.similartracks;
+            for (var j=0; j<4; j++){
+              let song = playlist.track[j].name;
+              $(`<li>${song}</li>`).appendTo('#tracks');
             }
-          })
+          }
+        });
 
-        }
-  });
-}
+      }
+
+    });
+  };
   module.artists = artists;
 })(app);
