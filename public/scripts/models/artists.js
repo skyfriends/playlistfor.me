@@ -39,28 +39,26 @@ let topTracks = [];
           url : 'http://ws.audioscrobbler.com/2.0/',
           data : {method: 'artist.gettoptracks', artist: artistSub, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
           dataType : 'json',
+          success: function(data) {
+            topTracks.push(data.toptracks);
+          }
         }))
       }
       return Promise.all(similarArtistsRequests)
 
     })
     .then(function(data) {
-      console.log(data);
-    })
-    // console.log(topTracks);
-    // console.log(similarArtists);
-  };
+      let track;
+        for (var i=0; i< similarArtists.length; i++) {
 
-  // artists.getSimilarTracks = function() {
-  //   for (var i=0; i< similarArtists.length; i++) {
-  //
-  //     let artist = similarArtists[i];
-  //     console.log(artist);
-  //
-  //     let track = topTracks[i];
-  //     console.log(track);
-  //
-  //   }
+          let artist = similarArtists[i];
+
+          track = topTracks[i].track[Math.floor(Math.random()* 50)];
+          console.log(track);
+        }
+          console.log();
+  });
+}
   //   $.ajax({
   //     type : 'GET',
   //     url : 'http://ws.audioscrobbler.com/2.0/',
