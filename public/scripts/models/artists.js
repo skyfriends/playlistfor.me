@@ -1,4 +1,3 @@
-
 'use strict';
 
 var app = app || {};
@@ -9,6 +8,7 @@ let playlistSizeSlider = 3;
 let similaritySlider = 1;
 let playlist = [];
 let appendToPlaylist;
+
 let trackMbid = [];
 let albumMbid = [];
 let albumCover;
@@ -21,6 +21,21 @@ let albumCover;
     $('#generate-button').on('click', function(){
       let artistSub = $('#artist-input').val();
       app.artists.getTopTracks(artistSub);
+      console.log(artistSub);
+    });
+  };
+
+  artists.handleSimilaritySlider = function(){
+    $('#similarity-slider').on('change', function(){
+      similaritySlider = $('#similarity-slider').val();
+      console.log(similaritySlider);
+    });
+  };
+
+  artists.handlePlaylistSizeSlider = function(){
+    $('#size-slider').on('change', function(){
+      playlistSizeSlider = $('#size-slider').val();
+      console.log(playlistSizeSlider);
     });
   };
 
@@ -77,7 +92,7 @@ let albumCover;
         similarTracksRequests.push($.ajax({
           type : 'GET',
           url : 'http://ws.audioscrobbler.com/2.0/',
-          data : {method: 'track.getsimilar', mbid: simTrack.mbid,  api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
+          data : {method: 'track.getsimilar', mbid: simTrack.mbid, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
           dataType : 'json',
           success: function(data) {
             allSimilarTracks.push(data.similartracks.track);
@@ -89,9 +104,16 @@ let albumCover;
     .then(function(data){
       playlist = allSimilarTracks.concat.apply([], allSimilarTracks);
       for (var i=similaritySlider; i<(similaritySlider + playlistSizeSlider); i++){
+        
         appendToPlaylist = playlist[i].name;
         trackMbid.push(playlist[i].mbid);
         $(`<li>${appendToPlaylist}</li>`).appendTo('#tracks');
+       
+        let content = {trackName: playlist[i].name, artistName: playlist[i].artist.name,albumArt: albumCover, albumName: '', duration: playlist[i].duration}
+        var template = Handlebars.compile($('#trackTemplate').text())(content);
+        console.log(playlist);
+        console.log(template);
+        $('#tracks').append(template);
       }
     });
   };
