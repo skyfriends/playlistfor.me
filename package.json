@@ -4,7 +4,8 @@
   "description": "A playlist generator",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -27,5 +28,6 @@
     "express": "^4.15.3",
     "express-request-proxy": "^2.0.0",
     "pg": "^6.2.3"
-  }
+  },
+  "devDependencies": {}
 }
