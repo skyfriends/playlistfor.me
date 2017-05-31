@@ -10,9 +10,15 @@
 }
 
 #artist-input{
+  display: inline-block;
   font-size: 30px;
   border: 2px solid black;
   border-radius: 12px;
   width: 30%;
   height: 100px;
 }
+
+/*#generate-button{
+  display: block;
+  width: 20%;
+}*/

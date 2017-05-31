@@ -5,17 +5,33 @@ var app = app || {};
 let similarArtists = [];
 let topTracks = [];
 let playlist = [];
+// let similaritySlider, playlistSizeSlider;
 
 (function(module) {
 
   const artists = {};
 
   artists.handleButton = function() {
-    $('#artist-button').on('click', function(){
+    $('#generate-button').on('click', function(){
       let artistSub = $('#artist-input').val();
       app.artists.getTopTracks(artistSub);
+      console.log(artistSub);
     });
   };
+
+  // artists.handleSimilaritySlider = function(){
+  //   $('#similarity-slider').on('change', function(){
+  //     similaritySlider = $('similaritySlider').val();
+  //     console.log(similaritySlider);
+  //   });
+  // };
+  //
+  // artists.handlePlaylistSizeSlider = function(){
+  //   $('#size-slider').on('change', function(){
+  //     playlistSizeSlider = $('#size-slider').val();
+  //     console.log(playlistSizeSlider);
+  //   });
+  // };
 
   artists.getTopTracks = function(artistSub) {
     $.ajax({
