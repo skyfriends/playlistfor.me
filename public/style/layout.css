@@ -5,13 +5,13 @@
     width: 600px
 }
 .templateLeft{
-    
+
 }
 .templateLeft img{
 
 }
 .album-name{
-        
+
 }
 .templateRight {
 
@@ -26,16 +26,16 @@
 @media screen and (min-width: 640px){
     .trackTemplate{
         background-color: purple;
-        /*width: 960px*/
+        width: 960px
     }
     .templateLeft{
-        
+
     }
     .templateLeft img{
 
     }
     .album-name{
-            
+
     }
     .templateRight {
 
