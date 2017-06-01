@@ -107,7 +107,10 @@ let albumCovers = [];
           data : {method: 'track.getsimilar', mbid: simTrack.mbid, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
           dataType : 'json',
           success: function(data) {
+            if (data.similartracks) {
+            console.log(data);
             allSimilarTracks.push(data.similartracks.track);
+          }
           }
         }));
       }
@@ -127,6 +130,9 @@ let albumCovers = [];
           dataType : 'json',
           success: function(data) {
             albumMbid.push(data.track.album.mbid);
+          },
+          error: function(error) {
+            console.log(error);
           }
         }));
       }
@@ -137,11 +143,12 @@ let albumCovers = [];
       for (var i=0; i<albumMbid.length; i++){
         albumArtRequests.push($.ajax({
           type: 'GET',
-          data: {format: 'json'},
-          url: `https://coverartarchive.org/release/${albumMbid[i]}`,
+          data: {format: 'json', method: 'album.getinfo', mbid: albumMbid[i], api_key: '57ee3318536b23ee81d6b27e36997cde'},
+          url: `https://ws.audioscrobbler.com/2.0/`,
           dataType: 'json',
           success: function(data){
-            albumCovers.push(data.images[0].image);
+            console.log(data);
+            albumCovers.push(data.album.image[3]['#text']);
           },
           error: function(){
             albumCovers.push('../images/defaultAlbum.png');
@@ -149,7 +156,7 @@ let albumCovers = [];
         }));
       }
       return Promise.all(albumArtRequests);
-////;klckl;cklcZKLnz
+
     }).then(function() {
       for (var j=similaritySlider; j<(similaritySlider + playlistSizeSlider); j++){
         let content = {trackName: playlist[j].name, artistName: playlist[j].artist.name, albumArt: albumCovers[j-similaritySlider], albumName: '', duration: playlist[j].duration};
