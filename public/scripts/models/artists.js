@@ -156,7 +156,7 @@ let albumCovers = [];
         }));
       }
       return Promise.all(albumArtRequests);
-
+//s d
     }).then(function() {
       for (var j=similaritySlider; j<(similaritySlider + playlistSizeSlider); j++){
         let content = {trackName: playlist[j].name, artistName: playlist[j].artist.name, albumArt: albumCovers[j-similaritySlider], albumName: '', duration: playlist[j].duration};
