@@ -54,7 +54,7 @@ let albumCovers = [];
   artists.getTopTracks = function(artistSub) {
     $.ajax({
       type : 'GET',
-      url : 'http://ws.audioscrobbler.com/2.0/',
+      url : 'https://ws.audioscrobbler.com/2.0/',
       data : {method: 'artist.getinfo', artist: artistSub, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
       dataType: 'json',
 
@@ -69,7 +69,7 @@ let albumCovers = [];
         let listOfArtists = data.artist.similar.artist[i].name;
         similarArtistsRequests.push($.ajax({
           type : 'GET',
-          url : 'http://ws.audioscrobbler.com/2.0/',
+          url : 'https://ws.audioscrobbler.com/2.0/',
           data : {method: 'artist.gettoptracks', artist: listOfArtists, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
           dataType : 'json',
           success: function(data) {
@@ -91,7 +91,7 @@ let albumCovers = [];
 
         similarTracksRequests.push($.ajax({
           type : 'GET',
-          url : 'http://ws.audioscrobbler.com/2.0/',
+          url : 'https://ws.audioscrobbler.com/2.0/',
           data : {method: 'track.getsimilar', mbid: simTrack.mbid, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
           dataType : 'json',
           success: function(data) {
@@ -110,7 +110,7 @@ let albumCovers = [];
         trackMbid.push(playlist[i].mbid);
         albumArtRequests.push($.ajax({
           type : 'GET',
-          url : 'http://ws.audioscrobbler.com/2.0/',
+          url : 'https://ws.audioscrobbler.com/2.0/',
           data : {method: 'track.getinfo', mbid: `${trackMbid[i]}`, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
           dataType : 'json',
           success: function(data) {
@@ -125,7 +125,7 @@ let albumCovers = [];
         $.ajax({
           type: 'GET',
           data: {format: 'json'},
-          url: `http://coverartarchive.org/release/${albumMbid[i]}`,
+          url: `https://coverartarchive.org/release/${albumMbid[i]}`,
           dataType: 'json',
           success: function(data){
             albumCovers.push(data.images[0].image);
