@@ -22,12 +22,25 @@
     </script>
   </head>
   <body>
-    <section id="artist">
-      <input id="artist-input" type="text" />
-      <button id="generate-button" type="submit">Generate</button>
-      <input id="similarity-slider" type="range" min="1" max="10" value="1"/>
-      <input id="size-slider" type="range" min="1" max="10" value="1" />
-    </section>
+    <header>
+      <nav>
+      </nav>
+    </header>
+
+    <main id="artist">
+      <input id="artist-input" type="text" placeholder="Enter an Artist Name"/>
+      <button id="generate-button" type="submit">Create Playlist</button>
+      <section id="customize-inputs">
+        <div id="similarity-slider">
+          <h1>Similarity</h1>
+          <input id="similarity-container" type="range" min="1" max="10" value="1"/>
+        </div>
+        <div id="size-container">
+          <h1>Length</h1>
+          <input id="size-slider" type="range" min="1" max="10" value="1" />
+        </div>
+      </section>
+    </main>
     <div id="tracks">
 
     </div>
