@@ -135,9 +135,17 @@ let albumCovers = [];
           }
         });
       }
+      function convert(duration) {
+        var m = Math.floor(duration / 60);
+        var s = duration % 60;
+        //m = m < 10 ? '0' + m : m;
+        s = s < 10 ? '0' + s : s;
+        return m + ':' + s;
+      }
+
 
       for (var j=similaritySlider; j<(similaritySlider + playlistSizeSlider); j++){
-        let content = {trackName: playlist[j].name, artistName: playlist[j].artist.name, albumArt: albumCovers[j-similaritySlider], albumName: '', duration: playlist[j].duration};
+        let content = {trackName: playlist[j].name, artistName: playlist[j].artist.name, albumArt: albumCovers[j-similaritySlider], albumName: '', duration: convert(playlist[j].duration)};
         var template = Handlebars.compile($('#trackTemplate').html())(content);
         console.log(playlist);
         console.log(template);
