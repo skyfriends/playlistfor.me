@@ -11,7 +11,7 @@ let appendToPlaylist;
 
 let trackMbid = [];
 let albumMbid = [];
-let albumCover;
+let albumCover = [];
 
 (function(module) {
 
@@ -114,29 +114,33 @@ let albumCover;
           data : {method: 'track.getinfo', mbid: `${trackMbid[i]}`, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
           dataType : 'json',
           success: function(data) {
-            albumMbid = data.track.album.mbid;
+
+            albumMbid.push(data.track.album.mbid);
+            $.ajax({
+              type: 'GET',
+              data: {format: 'json'},
+              url: `http://coverartarchive.org/release/${albumMbid[]}`,
+              ///////ITS PROBABLY SOMETHING TO DO WITH THIS///////
+              dataType: 'json',
+              success: function(data){
+                albumCover.push(data.images[0].image);
+
+              }
+            });
           }
         }));
       }
       return Promise.all(albumArtRequests);
     })
     .then(function(data){
-      $.ajax({
-        type: 'GET',
-        data: {format: 'json'},
-        url: `http://coverartarchive.org/release/${albumMbid}`,
-        dataType: 'json',
-        success: function(data){
-          albumCover = data.images[0].image;
-          for (var i=similaritySlider; i<(similaritySlider + playlistSizeSlider); i++){
-            let content = {trackName: playlist[i].name, artistName: playlist[i].artist.name,albumArt: albumCover, albumName: '', duration: playlist[i].duration};
-            var template = Handlebars.compile($('#trackTemplate').text())(content);
-            console.log(playlist);
-            console.log(template);
-            $('#tracks').append(template);
-          }
-        }
-      });
+      for (var i=similaritySlider; i<(similaritySlider + playlistSizeSlider); i++){
+        let content = {trackName: playlist[i].name, artistName: playlist[i].artist.name, albumArt: albumCover, albumName: '', duration: playlist[i].duration};
+        var template = Handlebars.compile($('#trackTemplate').text())(content);
+        console.log(playlist);
+        console.log(template);
+        $('#tracks').append(template);
+      }
+
     })
   };
   module.artists = artists;
