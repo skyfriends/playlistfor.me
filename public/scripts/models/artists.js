@@ -11,7 +11,7 @@ let appendToPlaylist;
 
 let trackMbid = [];
 let albumMbid = [];
-let albumCover;
+let albumCovers = [];
 
 (function(module) {
 
@@ -114,29 +114,36 @@ let albumCover;
           data : {method: 'track.getinfo', mbid: `${trackMbid[i]}`, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
           dataType : 'json',
           success: function(data) {
-            albumMbid = data.track.album.mbid;
+            albumMbid.push(data.track.album.mbid);
           }
         }));
       }
       return Promise.all(albumArtRequests);
     })
     .then(function(data){
-      $.ajax({
-        type: 'GET',
-        data: {format: 'json'},
-        url: `http://coverartarchive.org/release/${albumMbid}`,
-        dataType: 'json',
-        success: function(data){
-          albumCover = data.images[0].image;
-          for (var i=similaritySlider; i<(similaritySlider + playlistSizeSlider); i++){
-            let content = {trackName: playlist[i].name, artistName: playlist[i].artist.name,albumArt: albumCover, albumName: '', duration: playlist[i].duration};
-            var template = Handlebars.compile($('#trackTemplate').text())(content);
-            console.log(playlist);
-            console.log(template);
-            $('#tracks').append(template);
+      for (var i=0; i<albumMbid.length; i++){
+        $.ajax({
+          type: 'GET',
+          data: {format: 'json'},
+          url: `http://coverartarchive.org/release/${albumMbid[i]}`,
+          dataType: 'json',
+          success: function(data){
+            albumCovers.push(data.images[0].image);
+          },
+          error: function(){
+            albumCovers.push('../images/defaultAlbum.png');
           }
-        }
-      });
+        });
+      }
+
+      for (var j=similaritySlider; j<(similaritySlider + playlistSizeSlider); j++){
+        let content = {trackName: playlist[j].name, artistName: playlist[j].artist.name, albumArt: albumCovers[j-similaritySlider], albumName: '', duration: playlist[j].duration};
+        var template = Handlebars.compile($('#trackTemplate').html())(content);
+        console.log(playlist);
+        console.log(template);
+        $('#tracks').append(template);
+      }
+
     })
   };
   module.artists = artists;
