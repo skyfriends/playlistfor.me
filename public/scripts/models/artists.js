@@ -17,6 +17,18 @@ let albumCovers = [];
 
   const artists = {};
 
+  function shufflePlaylist(playlist) {
+ let seen = {};
+  return _.shuffle(playlist.filter(function(song) {
+    if (seen[song.mbid]) {
+      return false;
+    } else {
+      seen[song.mbid] = true;
+      return true;
+    }
+  }))
+};
+
   artists.handleButton = function() {
     $('#generate-button').on('click', function(){
       let artistSub = $('#artist-input').val();
@@ -106,6 +118,7 @@ let albumCovers = [];
       let albumArtRequests = [];
 
       playlist = allSimilarTracks.concat.apply([], allSimilarTracks);
+      playlist = shufflePlaylist(playlist);
       for (var i=0; i<playlistSizeSlider; i++){
         trackMbid.push(playlist[i].mbid);
         albumArtRequests.push($.ajax({
