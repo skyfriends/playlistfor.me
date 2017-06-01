@@ -17,6 +17,18 @@ let albumCovers = [];
 
   const artists = {};
 
+  function shufflePlaylist(playlist) {
+ let seen = {};
+  return _.shuffle(playlist.filter(function(song) {
+    if (seen[song.mbid]) {
+      return false;
+    } else {
+      seen[song.mbid] = true;
+      return true;
+    }
+  }))
+};
+
   artists.handleButton = function() {
     $('#generate-button').on('click', function(){
       let artistSub = $('#artist-input').val();
@@ -54,7 +66,7 @@ let albumCovers = [];
   artists.getTopTracks = function(artistSub) {
     $.ajax({
       type : 'GET',
-      url : 'http://ws.audioscrobbler.com/2.0/',
+      url : 'https://ws.audioscrobbler.com/2.0/',
       data : {method: 'artist.getinfo', artist: artistSub, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
       dataType: 'json',
 
@@ -69,7 +81,7 @@ let albumCovers = [];
         let listOfArtists = data.artist.similar.artist[i].name;
         similarArtistsRequests.push($.ajax({
           type : 'GET',
-          url : 'http://ws.audioscrobbler.com/2.0/',
+          url : 'https://ws.audioscrobbler.com/2.0/',
           data : {method: 'artist.gettoptracks', artist: listOfArtists, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
           dataType : 'json',
           success: function(data) {
@@ -91,11 +103,14 @@ let albumCovers = [];
 
         similarTracksRequests.push($.ajax({
           type : 'GET',
-          url : 'http://ws.audioscrobbler.com/2.0/',
+          url : 'https://ws.audioscrobbler.com/2.0/',
           data : {method: 'track.getsimilar', mbid: simTrack.mbid, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
           dataType : 'json',
           success: function(data) {
+            if (data.similartracks) {
+            console.log(data);
             allSimilarTracks.push(data.similartracks.track);
+          }
           }
         }));
       }
@@ -104,37 +119,42 @@ let albumCovers = [];
     .then(function(data){
 
       let albumArtRequests = [];
-
       playlist = allSimilarTracks.concat.apply([], allSimilarTracks);
+      playlist = shufflePlaylist(playlist);
       for (var i=0; i<playlistSizeSlider; i++){
         trackMbid.push(playlist[i].mbid);
         albumArtRequests.push($.ajax({
           type : 'GET',
-          url : 'http://ws.audioscrobbler.com/2.0/',
+          url : 'https://ws.audioscrobbler.com/2.0/',
           data : {method: 'track.getinfo', mbid: `${trackMbid[i]}`, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
           dataType : 'json',
           success: function(data) {
             albumMbid.push(data.track.album.mbid);
+          },
+          error: function(error) {
+            console.log(error);
           }
         }));
       }
       return Promise.all(albumArtRequests);
     })
     .then(function(data){
+      let albumArtRequests = [];
       for (var i=0; i<albumMbid.length; i++){
-        $.ajax({
+        albumArtRequests.push($.ajax({
           type: 'GET',
-          data: {format: 'json'},
-          url: `http://coverartarchive.org/release/${albumMbid[i]}`,
+          data: {format: 'json', method: 'album.getinfo', mbid: albumMbid[i], api_key: '57ee3318536b23ee81d6b27e36997cde'},
+          url: `https://ws.audioscrobbler.com/2.0/`,
           dataType: 'json',
           success: function(data){
-            albumCovers.push(data.images[0].image);
+            console.log(data);
+            albumCovers.push(data.album.image[3]['#text']);
           },
           error: function(){
             albumCovers.push('../images/defaultAlbum.png');
           }
-        });
-      }
+        }));
+ 
       function convert(duration) {
         let m = Math.floor(duration / 60);
         let s = duration % 60;
@@ -143,6 +163,9 @@ let albumCovers = [];
       }
 
 
+      return Promise.all(albumArtRequests);
+
+    }).then(function() {
       for (var j=similaritySlider; j<(similaritySlider + playlistSizeSlider); j++){
         let content = {trackName: playlist[j].name, artistName: playlist[j].artist.name, albumArt: albumCovers[j-similaritySlider], albumName: '', duration: convert(playlist[j].duration)};
         var template = Handlebars.compile($('#trackTemplate').html())(content);
@@ -150,8 +173,7 @@ let albumCovers = [];
         console.log(template);
         $('#tracks').append(template);
       }
-
-    })
+    });
   };
   module.artists = artists;
 })(app);
