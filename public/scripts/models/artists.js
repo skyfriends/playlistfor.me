@@ -116,7 +116,6 @@ let albumCovers = [];
     .then(function(data){
 
       let albumArtRequests = [];
-
       playlist = allSimilarTracks.concat.apply([], allSimilarTracks);
       playlist = shufflePlaylist(playlist);
       for (var i=0; i<playlistSizeSlider; i++){
@@ -134,8 +133,9 @@ let albumCovers = [];
       return Promise.all(albumArtRequests);
     })
     .then(function(data){
+      let albumArtRequests = [];
       for (var i=0; i<albumMbid.length; i++){
-        $.ajax({
+        albumArtRequests.push($.ajax({
           type: 'GET',
           data: {format: 'json'},
           url: `http://coverartarchive.org/release/${albumMbid[i]}`,
@@ -146,9 +146,11 @@ let albumCovers = [];
           error: function(){
             albumCovers.push('../images/defaultAlbum.png');
           }
-        });
+        }));
       }
+      return Promise.all(albumArtRequests);
 
+    }).then(function() {
       for (var j=similaritySlider; j<(similaritySlider + playlistSizeSlider); j++){
         let content = {trackName: playlist[j].name, artistName: playlist[j].artist.name, albumArt: albumCovers[j-similaritySlider], albumName: '', duration: playlist[j].duration};
         var template = Handlebars.compile($('#trackTemplate').html())(content);
@@ -156,7 +158,6 @@ let albumCovers = [];
         console.log(template);
         $('#tracks').append(template);
       }
-
     });
   };
   module.artists = artists;
