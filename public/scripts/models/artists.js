@@ -136,9 +136,8 @@ let albumCovers = [];
         });
       }
       function convert(duration) {
-        var m = Math.floor(duration / 60);
-        var s = duration % 60;
-        //m = m < 10 ? '0' + m : m;
+        let m = Math.floor(duration / 60);
+        let s = duration % 60;
         s = s < 10 ? '0' + s : s;
         return m + ':' + s;
       }
