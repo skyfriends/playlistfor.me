@@ -132,6 +132,6 @@ let albumCover;
         });
       }
     });
-  }
+  };
   module.artists = artists;
 })(app);
