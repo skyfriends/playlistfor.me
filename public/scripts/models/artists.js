@@ -144,7 +144,7 @@ let albumCovers = [];
         $('#tracks').append(template);
       }
 
-    })
+    });
   };
   module.artists = artists;
 })(app);
