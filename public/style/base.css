@@ -25,15 +25,17 @@ nav{
   position: relative;
   display: inline-block;
   font-size: 30px;
+  font-family: 'Montserrat', sans-serif;
   border: 2px solid black;
   border-radius: 12px;
-  width: 30%;
+  width: 80%;
   height: 100px;
   box-shadow: 2px 2px #888888;
 }
 
 #generate-button{
   background-color: #e6e6e6;
+  font-family: 'Montserrat', sans-serif;
   font-size: 16px;
   display: block;
   position: relative;
@@ -56,23 +58,30 @@ nav{
 }
 #customize-inputs{
   margin-top: 50px;
-  width: 960px;
+  width: 80%;
   position: relative;
 }
 
-#customize-inputs input{
-  margin: 20px;
-}
-
 #customize-inputs h1 {
-  font-family: helvetica;
+  font-family: 'Montserrat', sans-serif;
 }
 
 #tracks{
   display: block;
+  position: absolute;
+  border-radius: 12px;
+  width: 80%;
+  left: 10%;
+  text-align: left;
+}
 
+#playlist-view{
+  height: 500px;
+  text-align: center;
+}
 
-/*#art > img{
-  display: inline;
-  width: 300px;
-  height: 300px;*/
+@media only screen and (min-width: 640px){
+
+main{
+  width: 960px;
+}
