@@ -12,6 +12,7 @@ let realTracks = [];
 let trackMbid = [];
 let albumMbid = [];
 let albumCovers = [];
+let trackCount;
 
 (function(module) {
 
@@ -83,7 +84,6 @@ let albumCovers = [];
       let similarTracksRequests = [];
 
       for (var i=0; i< similarArtists.length; i++) {
-
         let simTrack = topTracks[i].track[i];
 
 
