@@ -4,11 +4,11 @@ var app = app || {};
 let similarArtists = [];
 let topTracks = [];
 let allSimilarTracks =[];
-let playlistSizeSlider = 3;
 let similaritySlider = 1;
+let playlistSizeSlider = 3;
 let playlist = [];
-let appendToPlaylist;
-
+let ajaxCalled=0;
+let post = 0;
 let trackMbid = [];
 let albumMbid = [];
 let albumCovers = [];
@@ -18,16 +18,16 @@ let albumCovers = [];
   const artists = {};
 
   function shufflePlaylist(playlist) {
- let seen = {};
-  return _.shuffle(playlist.filter(function(song) {
-    if (seen[song.mbid]) {
-      return false;
-    } else {
-      seen[song.mbid] = true;
-      return true;
-    }
-  }))
-};
+    let seen = {};
+    return _.shuffle(playlist.filter(function(song) {
+      if (seen[song.mbid]) {
+        return false;
+      } else {
+        seen[song.mbid] = true;
+        return true;
+      }
+    }))
+  }
 
   artists.handleButton = function() {
     $('#generate-button').on('click', function(){
@@ -43,23 +43,10 @@ let albumCovers = [];
       console.log(similaritySlider);
     });
   };
-
   artists.handlePlaylistSizeSlider = function(){
     $('#size-slider').on('change', function(){
       playlistSizeSlider = $('#size-slider').val();
       console.log(playlistSizeSlider);
-    });
-  };
-
-  artists.handleSimilaritySlider = function(){
-    $('#similarity-slider').on('change', function(){
-      similaritySlider = $('#similarity-slider').val();
-    });
-  };
-
-  artists.handlePlaylistSizeSlider = function(){
-    $('#size-slider').on('change', function(){
-      playlistSizeSlider = $('#size-slider').val();
     });
   };
 
@@ -71,13 +58,12 @@ let albumCovers = [];
       dataType: 'json',
 
     }).then(function(data){
-
+      playlist = [];
       let $artistList = $('<ul>').addClass('artistList').appendTo('#artist');
       let similarArtistsRequests = [];
-
       for (var i=0; i<data.artist.similar.artist.length; i++){
         similarArtists.push(data.artist.similar.artist[i].name);
-        $(`<li>${similarArtists[i]}</li>`).appendTo($artistList);
+        $artistList.push(similarArtists);
         let listOfArtists = data.artist.similar.artist[i].name;
         similarArtistsRequests.push($.ajax({
           type : 'GET',
@@ -86,6 +72,7 @@ let albumCovers = [];
           dataType : 'json',
           success: function(data) {
             topTracks.push(data.toptracks);
+            ajaxCalled++;
           }
         }));
       }
@@ -108,9 +95,10 @@ let albumCovers = [];
           dataType : 'json',
           success: function(data) {
             if (data.similartracks) {
-            console.log(data);
-            allSimilarTracks.push(data.similartracks.track);
-          }
+              console.log(data);
+              ajaxCalled++;
+              allSimilarTracks.push(data.similartracks.track);
+            }
           }
         }));
       }
@@ -119,17 +107,21 @@ let albumCovers = [];
     .then(function(data){
 
       let albumArtRequests = [];
+      let l = 0;
       playlist = allSimilarTracks.concat.apply([], allSimilarTracks);
       playlist = shufflePlaylist(playlist);
-      for (var i=0; i<playlistSizeSlider; i++){
+      for (var i=similaritySlider; i<(similaritySlider + playlistSizeSlider); i++){
         trackMbid.push(playlist[i].mbid);
         albumArtRequests.push($.ajax({
           type : 'GET',
           url : 'https://ws.audioscrobbler.com/2.0/',
-          data : {method: 'track.getinfo', mbid: `${trackMbid[i]}`, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
+          data : {method: 'track.getinfo', mbid: trackMbid[l], api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
           dataType : 'json',
           success: function(data) {
             albumMbid.push(data.track.album.mbid);
+            ajaxCalled++;
+            l++;
+            
           },
           error: function(error) {
             console.log(error);
@@ -140,7 +132,7 @@ let albumCovers = [];
     })
     .then(function(data){
       let albumArtRequests = [];
-      for (var i=0; i<albumMbid.length; i++){
+      for (var i=0; i<(playlistSizeSlider); i++){
         albumArtRequests.push($.ajax({
           type: 'GET',
           data: {format: 'json', method: 'album.getinfo', mbid: albumMbid[i], api_key: '57ee3318536b23ee81d6b27e36997cde'},
@@ -149,6 +141,8 @@ let albumCovers = [];
           success: function(data){
             console.log(data);
             albumCovers.push(data.album.image[3]['#text']);
+            ajaxCalled++;
+
           },
           error: function(){
             albumCovers.push('../images/defaultAlbum.png');
@@ -163,12 +157,18 @@ let albumCovers = [];
         s = s < 10 ? '0' + s : s;
         return m + ':' + s;
       }
-      for (var j=similaritySlider; j<(similaritySlider + playlistSizeSlider); j++){
-        let content = {trackName: playlist[j].name, artistName: playlist[j].artist.name, albumArt: albumCovers[j-similaritySlider], albumName: '', duration: convert(playlist[j].duration)};
+      let k = 0;
+      let j = similaritySlider+playlistSizeSlider;
+      for (var h=(similaritySlider); h<j; h++){
+        let content = {trackName: playlist[h].name, artistName: playlist[h].artist.name, albumArt: albumCovers[k], albumName: '', duration: convert(playlist[h].duration)};
         var template = Handlebars.compile($('#trackTemplate').html())(content);
+        console.log(h);
+        console.log(k);
         console.log(playlist);
         console.log(template);
         $('#tracks').append(template);
+        post++;
+        k++;
       }
     });
   };
