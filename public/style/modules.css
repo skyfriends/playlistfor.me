@@ -30,8 +30,17 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   background: #0b4072;
 }
 
-html, body {
-  background: linear-gradient(#EFF0F9, #BEC0E2);
+#about {
+  background: linear-gradient(#0B4072,#C0C8D6);
+}
+nav a{
+  top: 50px;
+  left: 10px;
+  color: #D5D7DA;
+  font-size: 35px;
+  text-decoration: none;*/
+  margin-top: : 210px ;
+  position: relative;
 }
 #au {
   width: 80%;
@@ -48,19 +57,14 @@ html, body {
 }
 
 #au h1 {
-  color: #21223D;
+  color: #D5D7DA;
   text-align: center;
-}
-#au h2 {
-  color: #2C2F82;
-}
-
-#au h1 {
   font-size: 2em;
   margin-bottom: 2%;
 }
 
 #au h2 {
+  color: #D5D7DA;
   font-size: 1.6em;
 }
 
@@ -78,7 +82,9 @@ html, body {
 #au a:hover {
   text-decoration: underline;
 }
-
+#au #home-link a {
+  color: #21223D;
+}
 #au #home-link {
   margin-top: 2%;
   font-family: Comfortaa, cursive;
