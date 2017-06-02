@@ -14,7 +14,9 @@ nav{
   height: 100px;
   background-color: #0b4072;
 }
-
+footer {
+  text-align: center;
+}
 #artist{
   text-align: center;
 }

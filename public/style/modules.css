@@ -40,6 +40,7 @@ nav a{
   font-size: 35px;
   text-decoration: none;*/
   margin-top: : 210px ;
+  text-shadow: 4px 4px 4px #000000;
   position: relative;
 }
 #au {
@@ -50,7 +51,7 @@ nav a{
   font-weight: lighter;
 }
 
-#au .members {
+.members {
   display: inline-block;
   width: 24%;
   text-align: center;
@@ -61,11 +62,13 @@ nav a{
   text-align: center;
   font-size: 2em;
   margin-bottom: 2%;
+  text-shadow: 4px 4px 4px #000000;
 }
 
 #au h2 {
   color: #D5D7DA;
   font-size: 1.6em;
+  text-shadow: 2px 3px 4px #21223D, #21223D 2px 3px 4px;
 }
 
 #au img{
