@@ -12,6 +12,7 @@ let appendToPlaylist;
 let trackMbid = [];
 let albumMbid = [];
 let albumCovers = [];
+let trackCount;
 
 (function(module) {
 
@@ -34,21 +35,6 @@ let albumCovers = [];
     $('#generate-button').on('click', function(){
       let artistSub = $('#artist-input').val();
       app.artists.getTopTracks(artistSub);
-      console.log(artistSub);
-    });
-  };
-
-  artists.handleSimilaritySlider = function(){
-    $('#similarity-slider').on('change', function(){
-      similaritySlider = $('#similarity-slider').val();
-      console.log(similaritySlider);
-    });
-  };
-
-  artists.handlePlaylistSizeSlider = function(){
-    $('#size-slider').on('change', function(){
-      playlistSizeSlider = $('#size-slider').val();
-      console.log(playlistSizeSlider);
     });
   };
 
@@ -98,7 +84,7 @@ let albumCovers = [];
 
       for (var i=0; i< similarArtists.length; i++) {
         let random = Math.floor(Math.random()* 50);
-        let simTrack = topTracks[i].track[random];
+        let simTrack = topTracks[i].track[i];
 
 
 
@@ -109,7 +95,6 @@ let albumCovers = [];
           dataType : 'json',
           success: function(data) {
             if (data.similartracks) {
-              console.log(data);
               allSimilarTracks.push(data.similartracks.track);
             }
           }
@@ -121,7 +106,8 @@ let albumCovers = [];
 
       let albumArtRequests = [];
       playlist = allSimilarTracks.concat.apply([], allSimilarTracks);
-      playlist = shufflePlaylist(playlist);
+      console.log(playlist)
+      // playlist = shufflePlaylist(playlist);
       for (var i=0; i<playlistSizeSlider; i++){
         trackMbid.push(playlist[i].mbid);
         albumArtRequests.push($.ajax({
@@ -133,7 +119,6 @@ let albumCovers = [];
             albumMbid.push(data.track.album.mbid);
           },
           error: function(error) {
-            console.log(error);
           }
         }));
       }
@@ -148,7 +133,6 @@ let albumCovers = [];
           url: 'https://ws.audioscrobbler.com/2.0/',
           dataType: 'json',
           success: function(data){
-            console.log(data);
             albumCovers.push(data.album.image[3]['#text']);
           },
           error: function(){
@@ -167,8 +151,6 @@ let albumCovers = [];
       for (var j=similaritySlider; j<(similaritySlider + playlistSizeSlider); j++){
         let content = {trackName: playlist[j].name, artistName: playlist[j].artist.name, albumArt: albumCovers[j-similaritySlider], albumName: '', duration: convert(playlist[j].duration)};
         var template = Handlebars.compile($('#trackTemplate').html())(content);
-        console.log(playlist);
-        console.log(template);
         $('#tracks').append(template);
         $('main').hide()
         $('#tracks').fadeIn();
