@@ -18,18 +18,19 @@ let albumCovers = [];
   const artists = {};
 
   function shufflePlaylist(playlist) {
- let seen = {};
-  return _.shuffle(playlist.filter(function(song) {
-    if (seen[song.mbid]) {
-      return false;
-    } else {
-      seen[song.mbid] = true;
-      return true;
-    }
-  }))
-};
+    let seen = {};
+    return _.shuffle(playlist.filter(function(song) {
+      if (seen[song.mbid]) {
+        return false;
+      } else {
+        seen[song.mbid] = true;
+        return true;
+      }
+    }))
+  };
 
   artists.handleButton = function() {
+    $('#tracks').hide();
     $('#generate-button').on('click', function(){
       let artistSub = $('#artist-input').val();
       app.artists.getTopTracks(artistSub);
@@ -77,7 +78,7 @@ let albumCovers = [];
 
       for (var i=0; i<data.artist.similar.artist.length; i++){
         similarArtists.push(data.artist.similar.artist[i].name);
-        $(`<li>${similarArtists[i]}</li>`).appendTo($artistList);
+        // $(`<li>${similarArtists[i]}</li>`).appendTo($artistList);
         let listOfArtists = data.artist.similar.artist[i].name;
         similarArtistsRequests.push($.ajax({
           type : 'GET',
@@ -108,9 +109,9 @@ let albumCovers = [];
           dataType : 'json',
           success: function(data) {
             if (data.similartracks) {
-            console.log(data);
-            allSimilarTracks.push(data.similartracks.track);
-          }
+              console.log(data);
+              allSimilarTracks.push(data.similartracks.track);
+            }
           }
         }));
       }
@@ -140,11 +141,11 @@ let albumCovers = [];
     })
     .then(function(data){
       let albumArtRequests = [];
-      for (var i=0; i<albumMbid.length; i++){
+      for (var i=0; i< playlistSizeSlider; i++){
         albumArtRequests.push($.ajax({
           type: 'GET',
           data: {format: 'json', method: 'album.getinfo', mbid: albumMbid[i], api_key: '57ee3318536b23ee81d6b27e36997cde'},
-          url: `https://ws.audioscrobbler.com/2.0/`,
+          url: 'https://ws.audioscrobbler.com/2.0/',
           dataType: 'json',
           success: function(data){
             console.log(data);
@@ -169,6 +170,9 @@ let albumCovers = [];
         console.log(playlist);
         console.log(template);
         $('#tracks').append(template);
+        $('main').hide()
+        $('#tracks').fadeIn();
+
       }
     });
   };
