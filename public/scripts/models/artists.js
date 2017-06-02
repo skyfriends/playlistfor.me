@@ -54,7 +54,7 @@ let albumCovers = [];
     $.ajax({
       type : 'GET',
       url : 'https://ws.audioscrobbler.com/2.0/',
-      data : {method: 'artist.getinfo', artist: artistSub, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
+      data : {method: 'artist.getinfo', artist: artistSub, api_key: fmKey, format: 'json'},
       dataType: 'json',
 
     }).then(function(data){
@@ -69,7 +69,7 @@ let albumCovers = [];
         similarArtistsRequests.push($.ajax({
           type : 'GET',
           url : 'https://ws.audioscrobbler.com/2.0/',
-          data : {method: 'artist.gettoptracks', artist: listOfArtists, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
+          data : {method: 'artist.gettoptracks', artist: listOfArtists, api_key: fmKey, format: 'json'},
           dataType : 'json',
           success: function(data) {
             topTracks.push(data.toptracks);
@@ -91,7 +91,7 @@ let albumCovers = [];
         similarTracksRequests.push($.ajax({
           type : 'GET',
           url : 'https://ws.audioscrobbler.com/2.0/',
-          data : {method: 'track.getsimilar', mbid: simTrack.mbid, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
+          data : {method: 'track.getsimilar', mbid: simTrack.mbid, api_key: fmKey, format: 'json'},
           dataType : 'json',
           success: function(data) {
             if (data.similartracks) {
@@ -111,7 +111,7 @@ let albumCovers = [];
         albumArtRequests.push($.ajax({
           type : 'GET',
           url : 'https://ws.audioscrobbler.com/2.0/',
-          data : {method: 'track.getinfo', mbid: `${trackMbid[i]}`, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
+          data : {method: 'track.getinfo', mbid: `${trackMbid[i]}`, api_key: fmKey, format: 'json'},
           dataType : 'json',
           success: function(data) {
             albumMbid.push(data.track.album.mbid);
@@ -126,16 +126,13 @@ let albumCovers = [];
     .then(function(data){
       let albumArtRequests = [];
       for (var i=0; i< playlistSizeSlider; i++){
-        console.log(albumMbid[i]);
         albumArtRequests.push($.ajax({
           type: 'GET',
-          data: {format: 'json', method: 'album.getinfo', mbid: albumMbid[i], api_key: '57ee3318536b23ee81d6b27e36997cde'},
+          data: {format: 'json', method: 'album.getinfo', mbid: albumMbid[i], api_key: fmKey},
           url: 'https://ws.audioscrobbler.com/2.0/',
           dataType: 'json',
           success: function(data){
-            console.log(data.album.image[3]['#text']);
             albumCovers.push(data.album.image[3]['#text']);
-            console.log(albumCovers);
           },
           error: function(){
             albumCovers.push('../images/defaultAlbum.png');
@@ -152,7 +149,6 @@ let albumCovers = [];
         return m + ':' + s;
       }
       let testCount =  playlistSizeSlider;
-      console.log(testCount);
       for (var j=0; j<(testCount); j++){
         let content = {trackName: realTracks[j].track.name, artistName: realTracks[j].track.artist.name, albumArt: realTracks[j].track.album.image[3]['#text'], albumName: '', duration: convert(playlist[j].duration)};
         var template = Handlebars.compile($('#trackTemplate').html())(content);
