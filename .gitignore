@@ -66,4 +66,6 @@ $RECYCLE.BIN/
 
 node_modules
 
+fmKey
+
 # End of https://www.gitignore.io/api/macos,linux,windows
