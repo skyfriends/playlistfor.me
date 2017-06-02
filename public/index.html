@@ -7,18 +7,20 @@
     <link href="/style/base.css" type="text/css" rel="stylesheet" />
     <link href="/style/layout.css" type="text/css" rel="stylesheet" />
     <link href="/style/modules.css" type="text/css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <script id="trackTemplate" type="text/x-handlebars-template">
-      <ul class="trackTemplate">
+      <div class="track-template">
         <div class="template-left">
           <img src={{albumArt}}>
-          <div class="album-name">{{albumName}}</div>
         </div>
+
         <div class ="template-right">
-        <div class="track-name">{{trackName}}</div>
-        <div class="artist-name">{{artistName}}</div>
+          <div class="track-name">{{trackName}}</div>
+          <div class="artist-name">{{artistName}}</div>
+          <div class="album-name">{{albumName}}</div>
+          <div class="track-length">{{duration}}</div>
         </div>
-        <div class="track-length">{{duration}}</div>
-      </ul>
+      </div>
     </script>
   </head>
   <body>
@@ -34,9 +36,9 @@
       <input id="artist-input" type="text" placeholder="Enter an Artist Name"/>
       <button id="generate-button" type="submit">Create Playlist</button>
       <section id="customize-inputs">
-        <div id="similarity-slider">
+        <div id="similarity-container">
           <h1>Similarity</h1>
-          <input id="similarity-container" type="range" min="1" max="10" value="1"/>
+          <input id="similarity-slider" type="range" min="1" max="10" value="1"/>
         </div>
         <div id="size-container">
           <h1>Length</h1>
@@ -44,9 +46,12 @@
         </div>
       </section>
     </main>
-    <div id="tracks">
+    <section id="playlist-view">
+      <div id="tracks">
 
-    </div>
+      </div>
+    </section>
+
     <div id="art">
 
     </div>
