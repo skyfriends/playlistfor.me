@@ -1,3 +1,7 @@
+body{
+  font-family: 'Montserrat', sans-serif;
+}
+
 input[type=range] {
   -webkit-appearance: none;
   width: 100%;
@@ -29,6 +33,7 @@ input[type=range]::-webkit-slider-thumb {
 input[type=range]:focus::-webkit-slider-runnable-track {
   background: #0b4072;
 }
+
 
 #about {
   background: linear-gradient(#0B4072,#C0C8D6);
@@ -95,4 +100,50 @@ nav a{
   display: block;
   width: 100%;
   text-align: center;
+
+
+.clip-text {
+  font-size: 90px;
+  font-weight: bold;
+  position: relative;
+  top: 10px;
+  display: inline-block;
+  /*margin: .25em;*/
+  /*padding: .5em .75em;*/
+  text-align: center;
+  color: white;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-background-clip: text;
+  -moz-text-fill-color: transparent;
+  -ms-background-clip: text;
+  -ms-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
+
+.clip-text_one {
+  background-image:url(https://media.giphy.com/media/SotJCbDWOnnWM/giphy.gif);
+  background-size: cover;
+     -webkit-text-stroke: 2px white;
+  -webkit-animation:anim 60000s infinite linear;
+  -moz-animation:anim 60000s infinite ease-in;
+  -ms-animation:anim 60000s infinite ease-in;
+  animation:anim 60000s infinite ease-in;
+}
+
+@-webkit-keyframes anim
+{0%{background-position: top;}50%{background-position: bottom;}100%{background-position: top;}}
+@-moz-keyframes anim
+{0%{background-position: top;}50%{background-position: bottom;}100%{background-position: top;}}
+@-ms-keyframes anim
+{0%{background-position: top;}50%{background-position: bottom;}100%{background-position: top;}}
+@keyframes anim
+{0%{background-position: top;}50%{background-position: bottom;}100%{background-position: top;}}
+
+
+@media screen and (max-width: 640px){
+  .clip-text{
+    font-size: 80px;
+  }
 }
