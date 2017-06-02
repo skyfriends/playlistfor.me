@@ -4,11 +4,11 @@ var app = app || {};
 let similarArtists = [];
 let topTracks = [];
 let allSimilarTracks =[];
-let playlistSizeSlider = 3;
+let playlistSizeSlider = 1;
 let similaritySlider = 1;
 let playlist = [];
 let appendToPlaylist;
-
+let realTracks = [];
 let trackMbid = [];
 let albumMbid = [];
 let albumCovers = [];
@@ -50,11 +50,12 @@ let trackCount;
     });
   };
 
+
   artists.getTopTracks = function(artistSub) {
     $.ajax({
       type : 'GET',
       url : 'https://ws.audioscrobbler.com/2.0/',
-      data : {method: 'artist.getinfo', artist: artistSub, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
+      data : {method: 'artist.getinfo', artist: artistSub, api_key: fmKey, format: 'json'},
       dataType: 'json',
 
     }).then(function(data){
@@ -69,7 +70,7 @@ let trackCount;
         similarArtistsRequests.push($.ajax({
           type : 'GET',
           url : 'https://ws.audioscrobbler.com/2.0/',
-          data : {method: 'artist.gettoptracks', artist: listOfArtists, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
+          data : {method: 'artist.gettoptracks', artist: listOfArtists, api_key: fmKey, format: 'json'},
           dataType : 'json',
           success: function(data) {
             topTracks.push(data.toptracks);
@@ -83,7 +84,6 @@ let trackCount;
       let similarTracksRequests = [];
 
       for (var i=0; i< similarArtists.length; i++) {
-        let random = Math.floor(Math.random()* 50);
         let simTrack = topTracks[i].track[i];
 
 
@@ -91,7 +91,7 @@ let trackCount;
         similarTracksRequests.push($.ajax({
           type : 'GET',
           url : 'https://ws.audioscrobbler.com/2.0/',
-          data : {method: 'track.getsimilar', mbid: simTrack.mbid, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
+          data : {method: 'track.getsimilar', mbid: simTrack.mbid, api_key: fmKey, format: 'json'},
           dataType : 'json',
           success: function(data) {
             if (data.similartracks) {
@@ -103,20 +103,19 @@ let trackCount;
       return Promise.all(similarTracksRequests);
     })
     .then(function(data){
-
       let albumArtRequests = [];
       playlist = allSimilarTracks.concat.apply([], allSimilarTracks);
-      console.log(playlist)
       // playlist = shufflePlaylist(playlist);
       for (var i=0; i<playlistSizeSlider; i++){
         trackMbid.push(playlist[i].mbid);
         albumArtRequests.push($.ajax({
           type : 'GET',
           url : 'https://ws.audioscrobbler.com/2.0/',
-          data : {method: 'track.getinfo', mbid: `${trackMbid[i]}`, api_key: '57ee3318536b23ee81d6b27e36997cde', format: 'json'},
+          data : {method: 'track.getinfo', mbid: `${trackMbid[i]}`, api_key: fmKey, format: 'json'},
           dataType : 'json',
           success: function(data) {
             albumMbid.push(data.track.album.mbid);
+            realTracks.push(data);
           },
           error: function(error) {
           }
@@ -129,7 +128,7 @@ let trackCount;
       for (var i=0; i< playlistSizeSlider; i++){
         albumArtRequests.push($.ajax({
           type: 'GET',
-          data: {format: 'json', method: 'album.getinfo', mbid: albumMbid[i], api_key: '57ee3318536b23ee81d6b27e36997cde'},
+          data: {format: 'json', method: 'album.getinfo', mbid: albumMbid[i], api_key: fmKey},
           url: 'https://ws.audioscrobbler.com/2.0/',
           dataType: 'json',
           success: function(data){
@@ -137,6 +136,7 @@ let trackCount;
           },
           error: function(){
             albumCovers.push('../images/defaultAlbum.png');
+
           }
         }));
       }
@@ -148,8 +148,9 @@ let trackCount;
         s = s < 10 ? '0' + s : s;
         return m + ':' + s;
       }
-      for (var j=similaritySlider; j<(similaritySlider + playlistSizeSlider); j++){
-        let content = {trackName: playlist[j].name, artistName: playlist[j].artist.name, albumArt: albumCovers[j-similaritySlider], albumName: '', duration: convert(playlist[j].duration)};
+      let testCount =  playlistSizeSlider;
+      for (var j=0; j<(testCount); j++){
+        let content = {trackName: realTracks[j].track.name, artistName: realTracks[j].track.artist.name, albumArt: realTracks[j].track.album.image[3]['#text'], albumName: '', duration: convert(playlist[j].duration)};
         var template = Handlebars.compile($('#trackTemplate').html())(content);
         $('#tracks').append(template);
         $('main').hide()
