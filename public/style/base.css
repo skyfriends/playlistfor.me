@@ -8,11 +8,17 @@
 
 body{
   background-color: #c0c8d6;
+  font-family: 'Montserrat', sans-serif;
 }
 
 nav{
-  height: 120px;
+  height: 130px;
   background-color: #0b4072;
+}
+
+main{
+  position: relative;
+  top: 20px;
 }
 
 #artist{
