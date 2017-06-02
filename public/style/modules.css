@@ -73,11 +73,11 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   text-decoration: underline;
 }
 
-#au #home-link {
+/*#au #home-link {
   margin-top: 2%;
   font-family: Comfortaa, cursive;
   font-size: 3em;
   display: block;
   width: 100%;
   text-align: center;
-}
+}*/
