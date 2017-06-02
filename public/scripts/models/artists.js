@@ -4,11 +4,11 @@ var app = app || {};
 let similarArtists = [];
 let topTracks = [];
 let allSimilarTracks =[];
-let playlistSizeSlider = 3;
+let playlistSizeSlider = 1;
 let similaritySlider = 1;
 let playlist = [];
 let appendToPlaylist;
-
+let realTracks = [];
 let trackMbid = [];
 let albumMbid = [];
 let albumCovers = [];
@@ -34,21 +34,6 @@ let albumCovers = [];
     $('#generate-button').on('click', function(){
       let artistSub = $('#artist-input').val();
       app.artists.getTopTracks(artistSub);
-      console.log(artistSub);
-    });
-  };
-
-  artists.handleSimilaritySlider = function(){
-    $('#similarity-slider').on('change', function(){
-      similaritySlider = $('#similarity-slider').val();
-      console.log(similaritySlider);
-    });
-  };
-
-  artists.handlePlaylistSizeSlider = function(){
-    $('#size-slider').on('change', function(){
-      playlistSizeSlider = $('#size-slider').val();
-      console.log(playlistSizeSlider);
     });
   };
 
@@ -63,6 +48,7 @@ let albumCovers = [];
       playlistSizeSlider = $('#size-slider').val();
     });
   };
+
 
   artists.getTopTracks = function(artistSub) {
     $.ajax({
@@ -97,8 +83,8 @@ let albumCovers = [];
       let similarTracksRequests = [];
 
       for (var i=0; i< similarArtists.length; i++) {
-        let random = Math.floor(Math.random()* 50);
-        let simTrack = topTracks[i].track[random];
+
+        let simTrack = topTracks[i].track[i];
 
 
 
@@ -109,7 +95,6 @@ let albumCovers = [];
           dataType : 'json',
           success: function(data) {
             if (data.similartracks) {
-              console.log(data);
               allSimilarTracks.push(data.similartracks.track);
             }
           }
@@ -118,10 +103,9 @@ let albumCovers = [];
       return Promise.all(similarTracksRequests);
     })
     .then(function(data){
-
       let albumArtRequests = [];
       playlist = allSimilarTracks.concat.apply([], allSimilarTracks);
-      playlist = shufflePlaylist(playlist);
+      // playlist = shufflePlaylist(playlist);
       for (var i=0; i<playlistSizeSlider; i++){
         trackMbid.push(playlist[i].mbid);
         albumArtRequests.push($.ajax({
@@ -131,9 +115,9 @@ let albumCovers = [];
           dataType : 'json',
           success: function(data) {
             albumMbid.push(data.track.album.mbid);
+            realTracks.push(data);
           },
           error: function(error) {
-            console.log(error);
           }
         }));
       }
@@ -142,17 +126,20 @@ let albumCovers = [];
     .then(function(data){
       let albumArtRequests = [];
       for (var i=0; i< playlistSizeSlider; i++){
+        console.log(albumMbid[i]);
         albumArtRequests.push($.ajax({
           type: 'GET',
           data: {format: 'json', method: 'album.getinfo', mbid: albumMbid[i], api_key: '57ee3318536b23ee81d6b27e36997cde'},
           url: 'https://ws.audioscrobbler.com/2.0/',
           dataType: 'json',
           success: function(data){
-            console.log(data);
+            console.log(data.album.image[3]['#text']);
             albumCovers.push(data.album.image[3]['#text']);
+            console.log(albumCovers);
           },
           error: function(){
             albumCovers.push('../images/defaultAlbum.png');
+
           }
         }));
       }
@@ -164,11 +151,11 @@ let albumCovers = [];
         s = s < 10 ? '0' + s : s;
         return m + ':' + s;
       }
-      for (var j=similaritySlider; j<(similaritySlider + playlistSizeSlider); j++){
-        let content = {trackName: playlist[j].name, artistName: playlist[j].artist.name, albumArt: albumCovers[j-similaritySlider], albumName: '', duration: convert(playlist[j].duration)};
+      let testCount =  playlistSizeSlider;
+      console.log(testCount);
+      for (var j=0; j<(testCount); j++){
+        let content = {trackName: realTracks[j].track.name, artistName: realTracks[j].track.artist.name, albumArt: realTracks[j].track.album.image[3]['#text'], albumName: '', duration: convert(playlist[j].duration)};
         var template = Handlebars.compile($('#trackTemplate').html())(content);
-        console.log(playlist);
-        console.log(template);
         $('#tracks').append(template);
         $('main').hide()
         $('#tracks').fadeIn();
