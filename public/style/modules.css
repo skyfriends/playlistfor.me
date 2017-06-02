@@ -34,6 +34,7 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   font-size: 90px;
   font-weight: bold;
   position: relative;
+  top: 10px;
   display: inline-block;
   /*margin: .25em;*/
   /*padding: .5em .75em;*/
@@ -67,3 +68,10 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 {0%{background-position: top;}50%{background-position: bottom;}100%{background-position: top;}}
 @keyframes anim
 {0%{background-position: top;}50%{background-position: bottom;}100%{background-position: top;}}
+
+
+@media screen and (max-width: 640px){
+  .clip-text{
+    font-size: 80px;
+  }
+}
